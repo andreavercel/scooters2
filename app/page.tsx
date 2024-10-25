@@ -1,92 +1,93 @@
+'use client'
+
+import React, { useRef } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { Suspense } from 'react'
-import Table from '@/components/table'
-import TablePlaceholder from '@/components/table-placeholder'
-import ExpandingArrow from '@/components/expanding-arrow'
+import HTMLFlipBook from 'react-pageflip'
+import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Space_Grotesk } from 'next/font/google'
 
-export const runtime = 'edge'
-export const preferredRegion = 'home'
-export const dynamic = 'force-dynamic'
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'] })
 
-export default function Home() {
+const Page = React.forwardRef((props, ref) => {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center">
-      <Link
-        href="https://vercel.com/templates/next.js/postgres-starter"
-        className="group mt-20 sm:mt-0 rounded-full flex space-x-1 bg-white/30 shadow-sm ring-1 ring-gray-900/5 text-gray-600 text-sm font-medium px-10 py-2 hover:shadow-lg active:shadow-sm transition-all"
-      >
-        <p>Deploy your own to Vercel</p>
-        <ExpandingArrow />
-      </Link>
-      <h1 className="pt-4 pb-8 bg-gradient-to-br from-black via-[#171717] to-[#575757] bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl">
-        Postgres on Vercel
-      </h1>
-      <Suspense fallback={<TablePlaceholder />}>
-        <Table />
-      </Suspense>
-      <p className="font-light text-gray-600 w-full max-w-lg text-center mt-6">
-        <Link
-          href="https://vercel.com/postgres"
-          className="font-medium underline underline-offset-4 hover:text-black transition-colors"
-        >
-          Vercel Postgres
-        </Link>{' '}
-        demo. <br /> Built with{' '}
-        <Link
-          href="https://nextjs.org/docs"
-          className="font-medium underline underline-offset-4 hover:text-black transition-colors"
-        >
-          Next.js App Router
-        </Link>
-        .
-      </p>
+    <div className="page bg-gray-800" ref={ref}>
+      <div className="page-content">
+        <Image
+          src={props.image.src}
+          alt={props.image.alt}
+          width={400}
+          height={600}
+          className="w-full h-full object-cover"
+        />
+        <p className="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white p-2 rounded">
+          {props.image.alt}
+        </p>
+      </div>
+    </div>
+  )
+})
 
-      <div className="flex justify-center space-x-5 pt-10 mt-10 border-t border-gray-300 w-full max-w-xl text-gray-600">
-        <Link
-          href="https://postgres-prisma.vercel.app/"
-          className="font-medium underline underline-offset-4 hover:text-black transition-colors"
+Page.displayName = 'Page'
+
+export default function CoolFontDarkScooterGalleryBook() {
+  const images = [
+    { id: 1, src: '/placeholder.svg?height=600&width=400', alt: 'Scooter 1' },
+    { id: 2, src: '/placeholder.svg?height=600&width=400', alt: 'Scooter 2' },
+    { id: 3, src: '/placeholder.svg?height=600&width=400', alt: 'Scooter 3' },
+    { id: 4, src: '/placeholder.svg?height=600&width=400', alt: 'Scooter 4' },
+    { id: 5, src: '/placeholder.svg?height=600&width=400', alt: 'Scooter 5' },
+    { id: 6, src: '/placeholder.svg?height=600&width=400', alt: 'Scooter 6' },
+  ]
+
+  const bookRef = useRef(null)
+
+  return (
+    <div className={`min-h-screen bg-gradient-to-b from-black to-gray-900 flex flex-col items-center justify-center p-4 text-gray-100 ${spaceGrotesk.className}`}>
+      <header className="text-center mb-8">
+        <h1 className="text-5xl font-bold text-gray-100 mb-2 tracking-tight">City Scooter Gallery</h1>
+        <p className="text-xl text-gray-300">Flip through our collection of urban scooters</p>
+      </header>
+
+      <div className="relative w-full max-w-3xl aspect-[3/4]">
+        <HTMLFlipBook
+          width={400}
+          height={600}
+          size="stretch"
+          minWidth={300}
+          maxWidth={1000}
+          minHeight={400}
+          maxHeight={1533}
+          maxShadowOpacity={0.5}
+          showCover={true}
+          mobileScrollSupport={true}
+          ref={bookRef}
+          className="book-gallery"
         >
-          Prisma
-        </Link>
-        <Link
-          href="https://postgres-kysely.vercel.app/"
-          className="font-medium underline underline-offset-4 hover:text-black transition-colors"
+          {images.map((image) => (
+            <Page key={image.id} image={image} />
+          ))}
+        </HTMLFlipBook>
+
+        <Button
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-700 hover:bg-gray-600 text-white"
+          onClick={() => bookRef.current.pageFlip().flipPrev()}
         >
-          Kysely
-        </Link>
-        <Link
-          href="https://postgres-drizzle.vercel.app/"
-          className="font-medium underline underline-offset-4 hover:text-black transition-colors"
+          <ChevronLeft className="h-6 w-6" />
+          <span className="sr-only">Previous page</span>
+        </Button>
+        <Button
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-700 hover:bg-gray-600 text-white"
+          onClick={() => bookRef.current.pageFlip().flipNext()}
         >
-          Drizzle
-        </Link>
+          <ChevronRight className="h-6 w-6" />
+          <span className="sr-only">Next page</span>
+        </Button>
       </div>
 
-      <div className="sm:absolute sm:bottom-0 w-full px-20 py-10 flex justify-between">
-        <Link href="https://vercel.com">
-          <Image
-            src="/vercel.svg"
-            alt="Vercel Logo"
-            width={100}
-            height={24}
-            priority
-          />
-        </Link>
-        <Link
-          href="https://github.com/vercel/examples/tree/main/storage/postgres-starter"
-          className="flex items-center space-x-2"
-        >
-          <Image
-            src="/github.svg"
-            alt="GitHub Logo"
-            width={24}
-            height={24}
-            priority
-          />
-          <p className="font-light">Source</p>
-        </Link>
-      </div>
-    </main>
+      <footer className="mt-8 text-center text-gray-400">
+        <p>&copy; {new Date().getFullYear()} City Scooter Gallery. All rights reserved.</p>
+      </footer>
+    </div>
   )
 }
